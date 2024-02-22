@@ -1,0 +1,27 @@
+name: Start and Stop AWS Instance
+
+on:
+  schedule:
+    - cron: '0 15 * * *'  # Runs every day at 9:00 AM UTC
+    - cron: '10 15 * * *' # Runs every day at 11:00 AM UTC
+
+jobs:
+  start-and-stop-instance:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install AWS CLI
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-west-2  # Set your region here
+
+      - name: Start EC2 Instance
+        if: github.event_name == 'schedule' && contains(github.event.schedule, '0 15 * * *')
+        run: |
+          aws ec2 start-instances --instance-ids i-0b52b4739e7cc7665
+
+      - name: Stop EC2 Instance
+        if: github.event_name == 'schedule' && contains(github.event.schedule, '10 15 * * *')
+        run: |
+          aws ec2 stop-instances --instance-ids i-0b52b4739e7cc7665

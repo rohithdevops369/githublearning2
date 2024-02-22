@@ -1,0 +1,53 @@
+name: Excel Processing
+
+on:
+  workflow_dispatch:
+    inputs:
+     artifact_name:
+         description: 'Enter the artifact name'
+         required: true
+         type: string
+     package_name:
+         description: 'Enter the package name'
+         required: true
+         type: string        
+jobs:
+  excel-processing:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Install node.js and dependencies
+      uses: actions/setup-node@v2
+      with:
+        node-version: '16'  
+    - run: npm install xlsx
+    - name: GitHub script
+      uses: actions/github-script@6.4.1
+      with:
+        github-token: ${{ secrets.GHE_PAT }}
+        script: |
+          const fs = require("fs")
+          const XLSX = require("xlsx");
+          const excelProcessing = XLSX.readFile("excelProcessing.xlsx");
+          const sheet1 = excelProcessing.sheet1[0];
+          const sheet1 = excelProcessing.Sheets[sheet1];
+          const jsonData = XLSX.utils.sheet_to_json(excelProcessing);
+          console.log(jsonData);
+          const repoName = jsonData.filter(
+            (artifact) = >
+              artifact.ArtifactName === "${{github.event.inputs.artifact_name }}" &&
+              (artifact.Environment == "PROD" || artifact.Environment == "UAT")
+              
+            );
+          console.log(repoName);
+          
+
+
+
+
+          
+          
+
