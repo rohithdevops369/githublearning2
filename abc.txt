@@ -1,3 +1,4 @@
 hi sample
 hello
 this is new update from rohith
+update fot git pull command
