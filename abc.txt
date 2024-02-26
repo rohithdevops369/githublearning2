@@ -1,3 +1,6 @@
 hello we are exewcuting stash commands
 hi sample
 hello
+
+
+executing pop commands
